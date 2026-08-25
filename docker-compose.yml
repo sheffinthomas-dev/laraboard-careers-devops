@@ -9,6 +9,7 @@ services:
       - .env
     volumes:
       - public-data:/var/www/public
+      - ./.env:/var/www/.env
     networks:
       - laraboard
  
