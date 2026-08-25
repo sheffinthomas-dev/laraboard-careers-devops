@@ -81,22 +81,24 @@ resource "aws_security_group" "web" {
 
 # --- Compute ---
 resource "aws_instance" "app_server" {
-  ami                    = "ami-01a00762f46d584a1" # Ubuntu 26.04 LTS, ap-south-1, verified from console
-  instance_type          = "t3.micro"              # free tier eligible, per your account/region
+  ami                    = "ami-01a00762f46d584a1"
+  instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = "laraboard-key"
-
-  tags = { Name = "laraboard-app-server" }
-
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+  tags      = { Name = "laraboard-app-server" }
   user_data = <<-EOF
-              #!/bin/bash
-              apt-get update -y
-              apt-get install -y docker.io docker-compose
-              systemctl enable docker
-              systemctl start docker
-              usermod -aG docker ubuntu
-              EOF
+                #!/bin/bash
+                apt-get update -y
+                apt-get install -y docker.io docker-compose-v2
+                systemctl enable docker
+                systemctl start docker
+                usermod -aG docker ubuntu
+                EOF
 }
 # --- Outputs --- 
 output "server_public_ip" {
