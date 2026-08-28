@@ -22,11 +22,14 @@ jobs:
             cd laraboard-careers-devops
             git pull origin main
             sudo docker compose up -d --build
-            sudo docker compose exec -T app php artisan migrate --force
-            sudo docker compose exec -T app php artisan storage:link
+            for i in 1 2 3 4 5 6 7 8 9 10; do
+              sudo docker compose exec -T app php artisan migrate --force && break
+              echo "Migration attempt $i failed, retrying in 5s..."
+              sleep 5
+            done
+            sudo docker compose exec -T app php artisan storage:link || true
             sudo docker compose exec -T app php artisan config:cache
 
       - name: Health check
         run: |
-          sleep 10
-          curl -f http://${{ secrets.EC2_HOST }} || exit 1
+          curl --retry 15 --retry-delay 5 --retry-connrefused -f http://${{ secrets.EC2_HOST }} || exit 1

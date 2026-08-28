@@ -8,6 +8,9 @@ services:
         volumes:
             - public-data:/var/www/public
             - ./.env:/var/www/.env
+        depends_on:
+            db:
+                condition: service_healthy
         networks:
             - laraboard
 
@@ -34,6 +37,20 @@ services:
             MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
         volumes:
             - dbdata:/var/lib/mysql
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "mysqladmin",
+                    "ping",
+                    "-h",
+                    "localhost",
+                    "-uroot",
+                    "-p${DB_PASSWORD}",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 20
         networks:
             - laraboard
 
