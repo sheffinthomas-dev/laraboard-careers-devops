@@ -70,6 +70,15 @@ services:
         networks:
             - laraboard
 
+    grafana:
+        image: grafana/grafana:latest
+        container_name: laraboard_grafana
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        networks:
+            - laraboard
+
 volumes:
     dbdata:
     public-data:
