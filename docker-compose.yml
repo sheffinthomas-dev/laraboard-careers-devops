@@ -23,6 +23,8 @@ services:
         volumes:
             - ./nginx.conf:/etc/nginx/conf.d/default.conf
             - public-data:/var/www/public:ro
+            - ./certbot/www:/var/www/certbot
+            - ./certbot/conf:/etc/letsencrypt
         depends_on:
             - app
         networks:
