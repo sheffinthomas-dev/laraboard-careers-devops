@@ -32,9 +32,14 @@ services:
         image: mysql:8.0
         container_name: laraboard_db
         restart: unless-stopped
+        command: --innodb-buffer-pool-size=64M --max-connections=20
         environment:
             MYSQL_DATABASE: laraboard
             MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+        deploy:
+            resources:
+                limits:
+                    memory: 300M
         volumes:
             - dbdata:/var/lib/mysql
         healthcheck:
